@@ -51,9 +51,9 @@ DronesManager::DroneRecord DronesManager::select(unsigned int index) const {
 		return tmp;
 	}
 
-	int i=1;
+	int i=0;
 	cur=first;
-	while(i<=index && cur->next)
+	while(i<index && cur->next)
 	{
 		cur=cur->next;
 		i++;
@@ -70,7 +70,6 @@ int DronesManager::search(DroneRecord value) const {
 	DroneRecord *cur;
 	cur=first;
 	while(cur!=NULL){
-		
 		if((*cur)==value){
 			break;
 		}
@@ -91,32 +90,39 @@ void DronesManager::print() const {
 }
 
 bool DronesManager::insert(DroneRecord value, unsigned int index) {
-	if (first==NULL){
-		return false;
-	}
-	
+			
 	if(index > get_size()){
 		return false;
+	}else if(index==0){
+		return insert_front(value);
 	}
-
-	DroneRecord *cur;
-	int i=1;
-	cur=first;
-	while(i<=index && cur->next)
-	{
-		cur=cur->next;
-		i++;
+	else if(index==get_size()){
+		return insert_back(value);
 	}
-	cout<<"at index "<<index<<" value "<<value.droneID<<endl;
-	print();
-	DroneRecord* tmp = new DroneRecord(value);
+	else{
+		DroneRecord *cur;
+		int i=0;
+		cur=first;
+		while(i<index-1 && cur->next)
+		{
+			cur=cur->next;
+			i++;
+		}
+//		cout<<"at index "<<index<<" value "<<value.droneID<<endl;
+//		print();
+		DroneRecord* tmp = new DroneRecord(value);
+			
+		cur->next->prev = tmp;
+		tmp->next=cur->next;
+		cur->next=tmp;
+		tmp->prev=cur;
 	
-	tmp->prev=cur->prev;
-	tmp->next=cur;
-	cur->prev=tmp;
-	
-	size++;
-	print();
+		size++;
+//		print();
+//		first->prev = NULL;
+//		last->next = NULL;
+//		cout<<"TUS "<<((first->prev == NULL) && (last->next == NULL))<<endl;
+	}
 	return true;
 }
 
@@ -151,7 +157,37 @@ bool DronesManager::insert_back(DroneRecord value) {
 }
 
 bool DronesManager::remove(unsigned int index) {
-	return false;
+
+	if(index > get_size() || get_size()==0){
+		return false;
+	}else if(index==0){
+		return remove_front();
+	}
+	else if(index==get_size()-1){
+		return remove_back();
+	}
+	else{
+		DroneRecord *cur;
+		int i=0;
+		cur=first;
+		while(i<index-1 && cur->next)
+		{
+			cur=cur->next;
+			i++;
+		}
+
+		DroneRecord *tmp, *tmp2;
+		
+		tmp=cur->next;
+		tmp2 = cur->next->next;
+		tmp2->prev = cur;
+		cur->next = tmp2;
+		
+		delete tmp;
+		size--;
+	}
+	return true;
+
 }
 
 bool DronesManager::remove_front() {
@@ -164,6 +200,7 @@ bool DronesManager::remove_front() {
 	}else{	
 		DroneRecord* tmp = first;
 		first=first->next;
+		first->prev=NULL;
 		delete tmp;
 	}
 	size--;
@@ -181,6 +218,7 @@ bool DronesManager::remove_back() {
 	}else{	
 		DroneRecord* tmp = last;
 		last=last->prev;
+		last->next=NULL;
 		delete tmp;
 	}
 	size--;
@@ -198,9 +236,9 @@ bool DronesManager::replace(unsigned int index, DroneRecord value) {
 	}
 
 	DroneRecord *cur;
-	int i=1;
+	int i=0;
 	cur=first;
-	while(i<=index && cur->next)
+	while(i<index && cur->next)
 	{
 		cur=cur->next;
 		i++;

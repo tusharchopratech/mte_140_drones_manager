@@ -182,10 +182,11 @@ public:
 			ASSERT_TRUE(manager.remove(1))
 			ASSERT_TRUE(manager.insert(DronesManager::DroneRecord(99), 0))
 
-			// Check that the manager has the right values
+//			// Check that the manager has the right values
+
 			ASSERT_TRUE(manager.select(0) == DronesManager::DroneRecord(99) && *manager.first == DronesManager::DroneRecord(99))
 			ASSERT_TRUE(manager.select(1) == DronesManager::DroneRecord(32) && *manager.last == DronesManager::DroneRecord(32))
-
+//
 			ASSERT_TRUE(manager.first->next == manager.last && manager.last->prev == manager.first)
 			ASSERT_TRUE(manager.first->prev == NULL && manager.last->next == NULL)
 
